@@ -3,6 +3,8 @@
 export default function Home() {
   return (
   <div className="min-h-screen bg-[#1e293b] py-10">
+    <div className="m-5">
+
      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* imagee logo */}
       
@@ -15,10 +17,10 @@ export default function Home() {
     </div>
     {/* header */}
     <div className="relative py-10 sm:max-w-xl sm:mx-auto">
-      <div className="absolute inset-0 bg-gradient-to-r from-[#b469ff] to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 rounded-3xl">
+      <div className="absolute  inset-0 bg-gradient-to-r from-[#b469ff] to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 rounded-3xl">
       </div>
 
-      <div className="relative px-4 py-20 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+      <div className="relative rounded-3xl px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
         <div className="max-w-md mx-auto">
           <div>
             <img src="/logo-full.png" className="h-20 sm:h-15" />
@@ -81,7 +83,7 @@ export default function Home() {
         </div>
       </div>
     </div>
-
+</div>
 
    
   </div>
