@@ -72,10 +72,10 @@ export default function Home() {
               RiderSync Hub brings the community together for shared adventures and cost-effective journeys.
               </p>  
             </div>
-            <div className="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7">
-              <p>Are you ready to Join the Ride?</p>
-              <p>
-                <a href="/register" className="text-blue-500 hover:text-blue-600">Get started</a>
+            <div className="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7 justify-items-center">
+              <p className="text-[#b469ff] text-center">Are you ready to Join the Ride?</p>
+              <p className="text-center m-6 bg-green-400 p-5 rounded-3xl hover:bg-green-600 text-white">
+                <a href="/register" className="">Get started</a>
               </p>
 
             </div>
