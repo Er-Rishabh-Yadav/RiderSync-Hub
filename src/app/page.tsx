@@ -75,7 +75,7 @@ export default function Home() {
             <div className="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7">
               <p>Are you ready to Join the Ride?</p>
               <p>
-                <a href="#" className="text-blue-500 hover:text-blue-600">Get started</a>
+                <a href="/register" className="text-blue-500 hover:text-blue-600">Get started</a>
               </p>
 
             </div>
