@@ -1,0 +1,122 @@
+.App {
+    font-family: sans-serif;
+    text-align: center;
+  }
+  
+  .cardWrapper {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .card {
+    width: 371px;
+    height: 400px;
+    left: 20px;
+    top: 50px;
+    margin: 2em;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .topSection {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px 8px 0 0;
+    font-size: 50px;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  .bottomSection {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    border-radius: 0 0 8px 8px;
+    justify-content: space-between;
+    padding: 10px 20px 20px 20px;
+  }
+  
+  .bottomSection p {
+    font-style: italic;
+    font-family: "Lora", serif;
+    font-size: 30px;
+    line-height: 35px;
+    display: flex;
+  }
+  
+  .cardButton {
+    height: 50px;
+    width: 311px;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 30px;
+    align-self: center;
+    line-height: 35px;
+    cursor: pointer;
+  }
+  
+  .clicked-card {
+    width: 371px;
+    height: 400px;
+    left: 20px;
+    top: 50px;
+    margin: 2em;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+  }
+  
+  .emoji {
+    font-size: 50px;
+  }
+  
+  .clicked-card .topSection,
+  .clicked-card .bottomSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+    position: absolute;
+    width: 100%;
+    z-index: 0;
+    transition: 1s;
+  }
+  
+  .clicked-card .topSection {
+    top: 0;
+  }
+  
+  .clicked-card .bottomSection {
+    bottom: 0;
+  }
+  
+  .clicked-card .topSection:hover {
+    transition: 1s;
+    height: 100%;
+    z-index: 99;
+    top: 0;
+  }
+  
+  .clicked-card .bottomSection:hover {
+    transition: 1s;
+    height: 100%;
+    z-index: 99;
+    bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .cardWrapper {
+      flex-direction: column;
+    }
+    .card {
+      margin-top: 3em;
+    }
+  }
+  
