@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Card } from "@/component/card/card";
-
+import Navbar from "@/component/Navbar/navbar"
 export default function Community() {
   const data = [
     // {
@@ -12,9 +12,9 @@ export default function Community() {
     //   buttonText: "Order now",
     // },
     {
-      title: "Rocket",
-      subtitle: "Join us into the outer space!",
-      emoji: "🚀",
+      title: "Rjit Riders",
+      subtitle: "Join us into the Rjit campus!",
+      emoji: "🏍",
       buttonText: "Book seat",
     },
     // {
@@ -88,11 +88,18 @@ export default function Community() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1e293b] py-10">
-        
+    <div className="min-h-screen bg-[#1e293b] ">
+        <div>
+        {Navbar()}
+
+        </div>
+        {/* cards */}
     <section className="text-align-center flex justify-around">
       {renderCards()}
     </section>
+    {/* button to create community */}
+    
+    {/* footer */}
     </div>
   );
 }
