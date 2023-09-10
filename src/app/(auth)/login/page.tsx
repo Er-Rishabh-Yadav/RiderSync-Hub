@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import React ,{useEffect, useState } from "react";
 import { ToastContainer,toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-
+import axios from "axios";
 import { useRouter} from "next/navigation"
 export default function Login() {
     const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isbutton,setisbutton] = useState(false);
   const route = useRouter();
-  const toastOptions = {
+  const toastOptions:any = {
     position: "bottom-right",
     autoClose: 8000,
     pauseOnHover: true,
@@ -20,25 +21,23 @@ export default function Login() {
     e.preventDefault();
 
     try {
-    if(username === 'admin' && password === 'admin'){
-        route.push('/');
-        toast.success('Login success.',{
-            position: "bottom-right",
-            autoClose: 8000,
-            pauseOnHover: true,
-            draggable: true,
-            theme: "dark",
-          });
-    }
-    else{
-        toast.error('Login failed.',{
-            position: "bottom-right",
-            autoClose: 8000,
-            pauseOnHover: true,
-            draggable: true,
-            theme: "dark",
-          });
-        }
+
+            const user = {
+              username: username,
+              password: password
+            }
+            await axios.post("/api/auth/login", user).then((res:any) => {
+                console.log(res.data)
+                toast.success("Login Successfull",toastOptions)
+                route.push("/communities")
+                
+            }).catch((err) => {
+                console.log(err.response.data.error)
+                toast.error(err.response.data.error)
+            })
+            // .finally(() => {
+            // setLoading(false)
+            // })
       // Handle successful login, like storing a token in local storage or state
     } catch (error) {
       console.error('Login error:', error);
@@ -52,7 +51,15 @@ export default function Login() {
         theme: "dark",
     });
     }
-  };    
+  }; 
+  useEffect(()=>{
+      if(username.length>0 && password.length>0){
+        setisbutton(true)
+      }
+      else{
+        setisbutton(false);
+      }
+  });
   return (
   <div className="min-h-screen bg-[#1e293b] py-10">
     <div className="m-5">

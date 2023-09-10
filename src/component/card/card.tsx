@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import "./styles.css";
-
+import Link from "next/link";
 const CardDiv = styled.div`
   width: 371px;
   height: 400px;
@@ -15,7 +15,9 @@ const CardDiv = styled.div`
   overflow: hidden;
 `;
 
+
 export const Card = ({
+  id,
   buttonColor,
   buttonText,
   buttonTextColor,
@@ -25,11 +27,14 @@ export const Card = ({
   subtitle,
   subtitleColor,
   title,
-  titleColor
+  titleColor,
+  users,
+  myid,
+  joincommunity
 }:any) => {
-  const [clicked, setClicked] = useState(false);
-
-  if (clicked) {
+ const isjoined = users.includes(myid);
+  if (isjoined) {
+    
     return (
       <article className="card clicked-card">
         <section className="topSection" style={{ background: primary }}>
@@ -39,9 +44,17 @@ export const Card = ({
           className="bottomSection"
           style={{ backgroundColor: secondary }}
         >
-          <div className="emoji" role="img">
-            This shown after the join of community
+          <div className="text-2xl m-5 p-5" role="img">
+            {subtitle} {emoji}
           </div>
+          <Link className="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring focus:ring-opacity-50" 
+          href={{
+            pathname:'/rides',
+            query:{
+              search: `${id}`
+            }
+        }}
+          >Explore Community</Link>
         </section>
       </article>
     );
@@ -58,7 +71,7 @@ export const Card = ({
         <button
           className="cardButton"
           style={{ backgroundColor: buttonColor, color: buttonTextColor }}
-          onClick={() => setClicked(!clicked)}
+          onClick={() => joincommunity(id,myid)}
         >
           {buttonText}
         </button>

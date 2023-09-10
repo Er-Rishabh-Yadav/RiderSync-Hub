@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer,toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
 import { useRouter} from "next/navigation"
+import axios from "axios"
 export default function Login() {
     const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email,setEmail]= useState('');
+  const [isbutton,setisbutton]=useState(false);
   const route = useRouter();
-  const toastOptions = {
+  const toastOptions :any= {
     position: "bottom-right",
     autoClose: 8000,
     pauseOnHover: true,
@@ -20,27 +23,28 @@ export default function Login() {
     e.preventDefault();
 
     try {
-    if(username === 'admin' && password === 'admin'){
-        route.push('/');
-        toast.success('Login success.',{
-            position: "bottom-right",
-            autoClose: 8000,
-            pauseOnHover: true,
-            draggable: true,
-            theme: "dark",
-          });
-    }
-    else{
-        toast.error('Login failed.',{
-            position: "bottom-right",
-            autoClose: 8000,
-            pauseOnHover: true,
-            draggable: true,
-            theme: "dark",
-          });
+      
+      
+        const user = {
+          username: username,
+          email:email,
+          password: password
         }
-      // Handle successful login, like storing a token in local storage or state
-    } catch (error) {
+        await axios.post("/api/auth/register", user).then((res:any) => {
+            console.log(res.data);
+            toast.success("Register Successfull",toastOptions)
+            route.push("/login")
+            
+        }).catch((err) => {
+            console.log(err.response.data.error)
+            toast.error(err.response.data.error)
+        })
+        // .finally(() => {
+        // setLoading(false)
+        // })
+  // Handle successful login, like storing a token in local storage or state
+} 
+    catch (error) {
       console.error('Login error:', error);
       // Handle login error, display a message to the user, etc.
       
@@ -53,6 +57,14 @@ export default function Login() {
     });
     }
   };    
+  useEffect(()=>{
+      if(username.length>0&&email.length>0&&password.length>0){
+        setisbutton(true)
+      }
+      else{
+        setisbutton(true);
+      }
+  })
   return (
   <div className="min-h-screen bg-[#1e293b] py-10">
     <div className="m-5">
@@ -88,6 +100,15 @@ export default function Login() {
             type="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            className="mt-1 px-3 py-2 block w-full border rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mt-1 px-3 py-2 block w-full border rounded-md shadow-sm focus:ring focus:ring-opacity-50"
           />
         </div>

@@ -13,7 +13,7 @@ function Navbar() {
     <header className="bg-slate py-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="brand text-white">
-        <img className="w-40 h-250" src="logo-full.png" alt="RHSync Hub"  />
+        <img className="w-10 h-50" src="logo-full.png" alt="RHSync Hub"  />
         </div>
         <div className="md:hidden">
           <button
@@ -44,7 +44,7 @@ function Navbar() {
           </ul>
         </nav>
         <div className="hidden md:flex items-center space-x-4">
-          <img src="user.jpg" alt="User" className="w-12 h-10 rounded-full" />
+          <img src="" alt="User" className="w-2 h-3 rounded-full" />
           {/* Add user image */}
         </div>
       </div>
