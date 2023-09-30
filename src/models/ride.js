@@ -32,11 +32,13 @@ const rideSchema = new mongoose.Schema({
     required: false,
     default: false,
   },
-  requestedUsers: [
-    {
+  requestedUsers: [{
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     }
+  }
+  
   ],
   acceptedUser: 
     {

@@ -1,9 +1,12 @@
 // "use client"
 import React, { useEffect, useState } from 'react';
 import {Ride , User}  from '@/interface/interface'
-// import axios from 'axios';
+import axios from 'axios';
 
+import Modal from 'react-modal';
 interface RideCardProps {
+  currentuser:string;
+  rideId: string;
   owner: string;
   rideName?: string;
   distance: number;
@@ -16,6 +19,8 @@ interface RideCardProps {
 }
 
 const RideCard: React.FC<RideCardProps> = ({
+  currentuser,
+  rideId,
   owner, 
   rideName, 
   distance,
@@ -25,15 +30,42 @@ const RideCard: React.FC<RideCardProps> = ({
   isRequested ,
   isOwner ,  }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [requestedUsers, setRequestedUsers] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // const [currentowner, setcurrentowner] = useState<User | null>(null);
   const handleRequestRide = () => {
     // Implement your logic to send a ride request here.
 
     setIsButtonDisabled(true);
+    const userId=currentuser; // Replace with the actual userID.
+    const rideID = rideId; // Replace with the actual rideID.
+
+    // Make an API request to send the userID and rideID.
+    axios.post('/api/ride/requestforride', { userId, rideID })
+      .then((response) => {
+        // Handle the API response here if needed.
+        console.log('Ride request sent successfully', response.data);
+      })
+      .catch((error) => {
+        // Handle errors if the request fails.
+        console.error('Error sending ride request', error);
+      });
   };
 
   
 
+  const handleSeeRequests = async () => {
+    const rideID = rideId;
+
+    try {
+      const response = await axios.post(`/api/ride/requestedUsers`, { rideID });
+      console.log(response.data);
+      setRequestedUsers(response.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error('Error fetching requested users:', error);
+    }
+  };
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
       <div>
@@ -63,7 +95,7 @@ const RideCard: React.FC<RideCardProps> = ({
 
         {
           isOwner && !isBooked && (
-            <button className="bg-red-500 text-white px-4 py-2 rounded-md ml-2">see the requests</button>
+            <button className="bg-red-500 text-white px-4 py-2 rounded-md ml-2" onClick={handleSeeRequests}>see the requests</button>
           )
         }
         {
@@ -87,7 +119,32 @@ const RideCard: React.FC<RideCardProps> = ({
             Chat
           </button>
         )}
-      </div>
+         {/* Modal */}
+         <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        className='modal absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
+        overlayClassName='overlay'
+      >
+        <div className='bg-slate-300 p-5 rounded-xl'>
+          <div className="max-w-md mx-auto">
+            <div className="divide-y divide-gray-200">
+              <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                <div className="w-full max-w-xs mx-auto ">
+                  <h2 className="text-2xl font-semibold mb-4">Requested Users</h2>
+                  <ul>
+                    {requestedUsers.map((userId) => (
+                      <li key={userId}>{userId}</li>
+                    ))}
+                  </ul>
+                  <button onClick={() => setIsModalOpen(false)}>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+         </Modal>
+    </div>
     </div>
   );
 };

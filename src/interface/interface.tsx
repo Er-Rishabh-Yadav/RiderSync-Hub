@@ -1,4 +1,6 @@
 export interface Ride {
+    _id?: any;
+    
     communityId?: string; // Update the property name to match the API response
     owner: string;
     rideName?: string;

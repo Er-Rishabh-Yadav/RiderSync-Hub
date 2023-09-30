@@ -57,6 +57,7 @@ function CommunityRides() {
     try {
       const response = await axios.get('/api/ride/getrides');
       const rides = response.data.rides;
+      console.log(rides)
       const filteredRides = rides.filter((ride: Ride) => ride.communityId === data);
       setRides(filteredRides);
     } catch (error) {
@@ -133,10 +134,13 @@ function CommunityRides() {
     rides.map((ride, index) => {
       const rideStatus = calculateRideStatus(ride);
       // setAddRideField(rideStatus);
+      console.log(ride._id)
 
       return (
         <div key={index} className="rounded-lg shadow-md bg-gray-800 p-4">
           <RideCard
+            rideId={ride._id}
+            currentuser={currentUser.id}
             owner={ride.owner}
             distance={ride.distance}
             isAccepted={rideStatus.isAccepted}
