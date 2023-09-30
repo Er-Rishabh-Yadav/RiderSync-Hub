@@ -2,93 +2,125 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { useSearchParams } from 'next/navigation'; // Import from 'next/router' instead of 'next/navigation'
-
-interface Ride {
-  community: string; // Update the property name to match the API response
-  user: string;
-  distance: number;
-  createdAt: Date;
-  remarks?: string;
-}
+import { useSearchParams } from 'next/navigation';
+import { User } from '@/interface/interface';
+import RideCard from '@/component/ridecard/card';
+import { Ride } from '@/interface/interface';
 
 function CommunityRides() {
   const [rides, setRides] = useState<Ride[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const searchParams = useSearchParams();
   const data = searchParams.get('search');
+  const [currentUser, setCurrentUser] = useState<User>({ id: '', username: '', email: '' });
 
-  const [newRide, setNewRide] = useState({
-    community: data,
-    user: '', // Initialize user as an empty string
+  const initialAddRideField = {
+    isBooked: false,
+    isAccepted: false,
+    isRequested: false,
+    isOwner: false,
+  };
+
+  const [addRideField, setAddRideField] = useState(initialAddRideField);
+
+  const [newRide, setNewRide] = useState<Ride>({
+    communityId: data || '',
+    owner: '', // Owner will be set later
     distance: 0,
-    remarks: '',
+    route: '',
+    isBooked: false,
+    requestedUsers: [],
   });
 
   useEffect(() => {
     Modal.setAppElement(document.body);
 
     // Fetch user data and then fetch rides
-    getuser()
+    getUser()
       .then(() => fetchRides())
       .catch((error) => console.error('Error fetching user:', error));
-  }, [data]);
+  }, []);
 
-  const getuser = async () => {
+  const getUser = async () => {
     try {
       const response = await axios.get('/api/auth/getuser');
-      console.log(response.data.user)
       const userId = response.data.user._id;
-      setNewRide({ ...newRide, user: userId });
-      console.log('user id ' + userId);
+      const username = response.data.user.username;
+      const email = response.data.user.email;
+      setCurrentUser({ id: userId, username, email });
     } catch (error) {
       console.error('Error fetching user:', error);
     }
   };
 
-  const fetchRides = async() => {
-   await axios.get(`/api/ride/getrides`)
-  .then(response => {
-    const rides = response.data.rides;
-    console.log(rides);
-    const filteredRides = rides.filter((ride:Ride) => ride.community === data);
+  const fetchRides = async () => {
+    try {
+      const response = await axios.get('/api/ride/getrides');
+      const rides = response.data.rides;
+      const filteredRides = rides.filter((ride: Ride) => ride.communityId === data);
+      setRides(filteredRides);
+    } catch (error) {
+      console.error('Error fetching rides:', error);
+    }
+  };
 
-    console.log(filteredRides);
-    setRides(filteredRides)
-    // set the rides which is in the data community
-    //need to traverse the array and check if the community is the same as the data
-    //if it is the same then set the rides
-
-  })
-  .catch(error => {
-    console.error('Error fetching rides:', error);
-  });
-  }
-   
+  const createRide = async () => {
+    try {
+      // Ensure you have a valid communityId and owner
+      const communityId = data || ''; // Use your logic to obtain the communityId
+      const owner = currentUser.id || ''; // Use your logic to obtain the owner
   
-  const createRide = () => {
-    axios
-      .post('api/ride/create', newRide)
-      .then((response) => {
-        // After creating the ride, update the community's rides array with the new ride ID
-        const rideId = response.data._id;
-        axios
-          .post(`api/community/addride`, { rideId:rideId , communityId: data})
-          .then(() => {
-            // Close the modal and refetch the rides
-            setIsModalOpen(false);
-            fetchRides();
-          })
-          .catch((error) => console.error('Error adding ride to community:', error));
-      })
-      .catch((error) => console.error('Error creating ride:', error));
+      // Update the newRide object with valid values
+      const updatedNewRide = {
+        ...newRide,
+        communityId,
+        owner,
+      };
+  
+      // Create the ride
+      const createRideResponse = await axios.post('/api/ride/create', updatedNewRide);
+      const rideId = createRideResponse.data.ride._id;
+  
+      // Reset newRide values
+      setNewRide({ ...newRide, distance: 0, route: '' });
+  
+      // Add the ride to the community
+      await axios.post('/api/community/addride', { rideId, communityId });
+  
+      // Close the modal and refresh rides
+      setIsModalOpen(false);
+      fetchRides();
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle the error gracefully, e.g., display an error message to the user
+    }
   };
   
+
+  function calculateRideStatus(ride: Ride) {
+    let isOwner = false;
+    let isBooked = false;
+    let isAccepted = false;
+    let isRequested = false;
+  
+    if (ride.owner === currentUser.id) {
+      isOwner = true;
+    } else if (ride.isBooked) {
+      isBooked = true;
+    } else if (ride.acceptedUser &&ride.acceptedUser.includes(currentUser.id)) {
+      isAccepted = true;
+    } else if (ride.requestedUsers.includes(currentUser.id)) {
+      isRequested = true;
+    }
+  
+    return { isOwner, isBooked, isAccepted, isRequested };
+  }
+  
+
   return (
     <div className='min-h-screen bg-[#1e293b] p-8'>
       <h1 className='text-3xl text-white mb-4'>Community Rides</h1>
 
-      {/* Button to open the modal */}
       <button
         onClick={() => setIsModalOpen(true)}
         className='bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-opacity-50'
@@ -96,26 +128,41 @@ function CommunityRides() {
         Create Ride
       </button>
 
-      {/* List of rides */}
-      <ul>
-         
-       {rides.map((ride, index) => (
-          <li key={index} className='text-white mb-2'>
-            <span className='font-bold'>User:</span> {ride.user} <br />
-            <span className='font-bold'>Distance:</span> {ride.distance} km <br />
-            <span className='font-bold'>Remarks:</span> {ride.remarks} <br />
-          </li>
-        ))} 
-      </ul>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+  {rides.length !== 0 ? (
+    rides.map((ride, index) => {
+      const rideStatus = calculateRideStatus(ride);
+      // setAddRideField(rideStatus);
 
-      {/* Modal */}
+      return (
+        <div key={index} className="rounded-lg shadow-md bg-gray-800 p-4">
+          <RideCard
+            owner={ride.owner}
+            distance={ride.distance}
+            isAccepted={rideStatus.isAccepted}
+            isRequested={rideStatus.isRequested}
+            isOwner={rideStatus.isOwner} 
+            route={ride.route}
+            isBooked={rideStatus.isBooked} 
+          />
+        </div>
+      );
+    })
+  ) : (
+    <p className="text-white col-span-full">No rides found.</p>
+  )}
+</div>
+
+
+
+
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
         className='modal absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
         overlayClassName='overlay'
       >
-        <div className=' bg-slate-300 p-5 rounded-xl'>
+           <div className=' bg-slate-300 p-5 rounded-xl'>
           
           <div className="max-w-md mx-auto">
           
@@ -137,12 +184,12 @@ function CommunityRides() {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium" htmlFor='remarks'>Remarks:</label>
+          <label className="block text-sm font-medium" htmlFor='route'>Route:</label>
           <textarea
-                id='remarks'
-                name='remarks'
-                value={newRide.remarks}
-                onChange={(e) => setNewRide({ ...newRide, remarks: e.target.value })}
+                id='route'
+                name='route'
+                value={newRide.route}
+                onChange={(e) => setNewRide({ ...newRide, route: e.target.value })}
             className="mt-1 px-3 py-2 block w-full border rounded-md shadow-sm focus:ring focus:ring-opacity-50"
           />
         </div>

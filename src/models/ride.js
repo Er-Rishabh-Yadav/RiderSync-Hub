@@ -1,16 +1,19 @@
-// rideModel.js
 const mongoose = require('mongoose');
 
 const rideSchema = new mongoose.Schema({
-  community: {
+  communityId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Community',
     required: true,
   },
-  user: {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+  },
+  rideName: {
+    type: String,
+    required: false,
   },
   distance: {
     type: Number,
@@ -20,10 +23,27 @@ const rideSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  remarks:{
+  route: {
     type: String,
+    required: true,
+  },
+  isBooked: {
+    type: Boolean,
     required: false,
-  }
+    default: false,
+  },
+  requestedUsers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  ],
+  acceptedUser: 
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  ,
   // You can add more fields relevant to a ride here
 });
 

@@ -83,7 +83,8 @@ export default function Community() {
   };
 
   const renderCards = () => {
-    return communities.map((item) => {
+    return communities.length == 0 ? "NO communities" :  communities.map((item) => {
+        
       const theme = generateRandomColor();
 
       return (
@@ -120,7 +121,7 @@ export default function Community() {
           Create Community
         </Link>
       </div>
-      <section className="text-align-center flex justify-around">
+      <section className="text-align-center flex justify-around text-white">
         {renderCards()}
       </section>
     </div>
