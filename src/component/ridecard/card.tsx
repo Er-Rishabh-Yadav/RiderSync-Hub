@@ -4,6 +4,8 @@ import {Ride , User}  from '@/interface/interface'
 import axios from 'axios';
 
 import Modal from 'react-modal';
+import mongoose from 'mongoose';
+import {Types} from 'mongoose'
 interface RideCardProps {
   currentuser:string;
   rideId: string;
@@ -30,7 +32,7 @@ const RideCard: React.FC<RideCardProps> = ({
   isRequested ,
   isOwner ,  }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [requestedUsers, setRequestedUsers] = useState<string[]>([]);
+  const [requestedUsers, setRequestedUsers] = useState<Array<{_id: Types.ObjectId}> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // const [currentowner, setcurrentowner] = useState<User | null>(null);
   const handleRequestRide = () => {
@@ -53,19 +55,25 @@ const RideCard: React.FC<RideCardProps> = ({
   };
 
   
-
   const handleSeeRequests = async () => {
     const rideID = rideId;
-
+  
     try {
       const response = await axios.post(`/api/ride/requestedUsers`, { rideID });
-      console.log(response.data);
-      setRequestedUsers(response.data);
+      const responseData = response.data; // Response data is an object
+  
+      console.log("See request response:", JSON.stringify(responseData, null, 2));
+  
+      // Assuming responseData has a property called "requestedUsers"
+      setRequestedUsers(responseData);
+      console.log(requestedUsers)
       setIsModalOpen(true);
     } catch (error) {
-      console.error('Error fetching requested users:', error);
+      // Handle errors if the request fails.
+      console.error('Error sending ride request', error);
     }
   };
+  
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
       <div>
@@ -133,9 +141,13 @@ const RideCard: React.FC<RideCardProps> = ({
                 <div className="w-full max-w-xs mx-auto ">
                   <h2 className="text-2xl font-semibold mb-4">Requested Users</h2>
                   <ul>
-                    {requestedUsers.map((userId) => (
-                      <li key={userId}>{userId}</li>
-                    ))}
+                     {requestedUsers && requestedUsers.map((userId) => (
+
+                                <li >
+                                  {String(userId._id)}
+                                </li>
+                                
+                           ))}
                   </ul>
                   <button onClick={() => setIsModalOpen(false)}>Close</button>
                 </div>
