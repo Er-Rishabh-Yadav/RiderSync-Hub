@@ -16,7 +16,7 @@ interface RideCardProps {
   route: string;
   isBooked: boolean;
   user?: User;
-  isAccepted: boolean;
+  isAccepted?: boolean;
   isRequested: boolean;
   isOwner: boolean;
 }
@@ -29,7 +29,6 @@ const RideCard: React.FC<RideCardProps> = ({
   distance,
   route,  
   isBooked, 
-  isAccepted  ,
   isRequested ,
   isOwner ,  }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -73,7 +72,19 @@ const RideCard: React.FC<RideCardProps> = ({
     }
   }
   
+  const handleAcceptRequest = async (username: string,rideID:string) => {
+    try {
+      const response = await axios.post('/api/ride/acceptRequest', { username,rideID });
+      if (response.status === 200) {
+        console.log('Request accepted successfully');
+      } else {
+        console.error('Error accepting request:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error accepting request:', error);
+    }
 
+  }
   
   
   const handleSeeRequests = async () => {
@@ -111,11 +122,9 @@ const RideCard: React.FC<RideCardProps> = ({
         {isRequested && (
           <p className="text-blue-500">Request pending...</p>
         )}
-        {isAccepted && (
-          <p className="text-blue-500">Ride accepted. Chat with the owner.</p>
-        )}
+        
         {isBooked && (
-          <p className="text-red-500">Ride is booked.</p>
+          <p className="text-red-500">your ride is booked.</p>
         )}
 
         
@@ -130,7 +139,7 @@ const RideCard: React.FC<RideCardProps> = ({
             <button className="bg-red-500 text-white px-4 py-2 rounded-md ml-2">cancel the request</button>
           )
         }
-        {!isOwner && !isRequested && !isAccepted && !isBooked && (
+        {!isOwner && !isRequested  && !isBooked && (
           <button
             className={`bg-blue-500 text-white px-4 py-2 rounded-md ${
               isButtonDisabled ? 'cursor-not-allowed opacity-5' : 'hover:bg-green-600'
@@ -141,7 +150,7 @@ const RideCard: React.FC<RideCardProps> = ({
             Request Ride
           </button>
         )}
-        {isAccepted && (
+        {isBooked && (
           <button className="bg-green-500 text-white px-4 py-2 rounded-md ml-2">
             Chat
           </button>
@@ -165,7 +174,7 @@ const RideCard: React.FC<RideCardProps> = ({
                   <span className="flex-grow">{username}</span>
                   <button
                     className="bg-blue-500 text-white px-3 py-1 rounded-md mr-1"
-                    onClick={() => console.log(username)}
+                    onClick={() => handleAcceptRequest(username,rideId)}
                   >
                     Accept
                   </button>

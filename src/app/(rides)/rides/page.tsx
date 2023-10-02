@@ -119,8 +119,6 @@ function CommunityRides() {
 // }
   function calculateRideStatus(ride: Ride, currentUser: User) {
     let isOwner = false;
-    let isBooked = false;
-    let isAccepted = false;
     let isRequested = false;
 
     // Check if the user has already requested the ride
@@ -129,16 +127,12 @@ function CommunityRides() {
 
     if (ride.owner === currentUser.id) {
       isOwner = true;
-    } else if (ride.isBooked) {
-      isBooked = true;
-    } else if (ride.acceptedUser && ride.acceptedUser.includes(currentUser.id)) {
-      isAccepted = true;
     } else if (isRequested) {
      
       console.log("you are requested")
     }
 
-    return { isOwner, isBooked, isAccepted, isRequested };
+    return { isOwner, isRequested };
   }
   
 
@@ -167,11 +161,10 @@ function CommunityRides() {
             currentuser={currentUser.id}
             owner={ride.owner}
             distance={ride.distance}
-            isAccepted={rideStatus.isAccepted}
             isRequested={rideStatus.isRequested}
             isOwner={rideStatus.isOwner} 
             route={ride.route}
-            isBooked={rideStatus.isBooked} 
+            isBooked={ride.isBooked} 
           />
         </div>
       );
