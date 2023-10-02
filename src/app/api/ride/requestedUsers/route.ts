@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     // Extract the requestedUsers array from the ride
     const requestedUsers = ride.requestedUsers || [];
-    console.log(requestedUsers)
+    console.log("requested users "+requestedUsers)
     // const requestedUserIds = requestedUsers.map((user: { toString: () => any; }) => user.toString());
     return NextResponse.json(requestedUsers, { status: 200 });
   } catch (error) {

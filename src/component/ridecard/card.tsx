@@ -6,6 +6,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import mongoose from 'mongoose';
 import {Types} from 'mongoose'
+import { cp } from 'fs';
 interface RideCardProps {
   currentuser:string;
   rideId: string;
@@ -32,7 +33,7 @@ const RideCard: React.FC<RideCardProps> = ({
   isRequested ,
   isOwner ,  }) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [requestedUsers, setRequestedUsers] = useState<Array<{_id: Types.ObjectId}> | null>(null);
+  const [requestedUsers, setRequestedUsers] = useState<Array<string>>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // const [currentowner, setcurrentowner] = useState<User | null>(null);
   const handleRequestRide = () => {
@@ -53,24 +54,42 @@ const RideCard: React.FC<RideCardProps> = ({
         console.error('Error sending ride request', error);
       });
   };
+  
+  async function fetchUsernameById(userId: string) {
+    try {
+      const response = await axios.post('/api/getUserById', { userId });
+  
+      if (response.status !== 200) {
+        // Handle the case where the response status is not 200
+        console.error('Error fetching user:', response.statusText);
+        return null; // Return null to indicate an error
+      }
+  
+      const user = response.data;
+      return user.username; // Return the username from the user object
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      return null; // Return null to indicate an error
+    }
+  }
+  
 
   
+  
   const handleSeeRequests = async () => {
-    const rideID = rideId;
-  
     try {
-      const response = await axios.post(`/api/ride/requestedUsers`, { rideID });
-      const responseData = response.data; // Response data is an object
-  
-      console.log("See request response:", JSON.stringify(responseData, null, 2));
-  
-      // Assuming responseData has a property called "requestedUsers"
-      setRequestedUsers(responseData);
-      console.log(requestedUsers)
-      setIsModalOpen(true);
+      const response = await axios.post(`/api/ride/requestedUsers`, { rideID: rideId });
+      if (response.status === 200) {
+        const userIds = response.data;
+        console.log(userIds)
+        const usernames = await Promise.all(userIds.map((userId: string) => fetchUsernameById(userId)));
+        setRequestedUsers(usernames);
+        setIsModalOpen(true);
+      } else {
+        console.error('Error fetching ride requests:', response.statusText);
+      }
     } catch (error) {
-      // Handle errors if the request fails.
-      console.error('Error sending ride request', error);
+      console.error('Error fetching ride requests:', error);
     }
   };
   
@@ -141,14 +160,10 @@ const RideCard: React.FC<RideCardProps> = ({
                 <div className="w-full max-w-xs mx-auto ">
                   <h2 className="text-2xl font-semibold mb-4">Requested Users</h2>
                   <ul>
-                     {requestedUsers && requestedUsers.map((userId) => (
-
-                                <li >
-                                  {String(userId._id)}
-                                </li>
-                                
-                           ))}
-                  </ul>
+                      {requestedUsers.map((username, index) => (
+                        <li key={index}>{username}</li>
+                      ))}
+                    </ul>
                   <button onClick={() => setIsModalOpen(false)}>Close</button>
                 </div>
               </div>
