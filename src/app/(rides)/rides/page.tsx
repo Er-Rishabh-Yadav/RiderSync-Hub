@@ -7,6 +7,8 @@ import { User } from '@/interface/interface';
 import RideCard from '@/component/ridecard/card';
 import { Ride } from '@/interface/interface';
 
+import mongoose from 'mongoose';
+
 function CommunityRides() {
   const [rides, setRides] = useState<Ride[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -97,23 +99,45 @@ function CommunityRides() {
     }
   };
   
+// const isRequested =  (rideId: string, userId: string) => {
+  
+//   try {
+//     const response =  axios.post('/api/ride/isRequested', { rideId,userId });
 
-  function calculateRideStatus(ride: Ride) {
+//     if (response.status !== 200) {
+//       // Handle the case where the response status is not 200
+//       console.error('Error fetching user:', response.statusText);
+//       return null; // Return null to indicate an error
+//     }
+//     console.log(response.data)
+//      return response.data;
+//     // Return the username from the user object
+//   } catch (error) {
+//     console.error('Error fetching user:', error);
+//     return null; // Return null to indicate an error
+//   }
+// }
+  function calculateRideStatus(ride: Ride, currentUser: User) {
     let isOwner = false;
     let isBooked = false;
     let isAccepted = false;
     let isRequested = false;
-  
+
+    // Check if the user has already requested the ride
+    const requestedUsers = ride.requestedUsers || [];
+    console.log(requestedUsers);
+
     if (ride.owner === currentUser.id) {
       isOwner = true;
     } else if (ride.isBooked) {
       isBooked = true;
-    } else if (ride.acceptedUser &&ride.acceptedUser.includes(currentUser.id)) {
+    } else if (ride.acceptedUser && ride.acceptedUser.includes(currentUser.id)) {
       isAccepted = true;
-    } else if (ride.requestedUsers.includes(currentUser.id)) {
-      isRequested = true;
+    } else if (isRequested) {
+     
+      console.log("you are requested")
     }
-  
+
     return { isOwner, isBooked, isAccepted, isRequested };
   }
   
@@ -132,7 +156,7 @@ function CommunityRides() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
   {rides.length !== 0 ? (
     rides.map((ride, index) => {
-      const rideStatus = calculateRideStatus(ride);
+      const rideStatus = calculateRideStatus(ride,currentUser);
       // setAddRideField(rideStatus);
       console.log(ride._id)
 

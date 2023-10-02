@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 export interface Ride {
     _id?: any;
     
@@ -9,7 +11,8 @@ export interface Ride {
     route: string;
     isBooked: boolean;
     acceptedUser?:string;
-    requestedUsers:string[];
+    // type of object array
+    requestedUsers:Array<mongoose.Types.ObjectId>;
 
   }
   export interface User {

@@ -25,20 +25,16 @@ export async function POST(request: NextRequest) {
     console.log(isrequestedUser);
     if (isrequestedUser) {
       return NextResponse.json(
-        { error: "User already requested for ride" },
-        { status: 400 }
-      );
+        true,
+        { status: 200 }
+        );
+    
     }
 
-    // Add the userId to the requestedUsers array
-    requestedUsers.push(userId);
-
-    // Save the updated ride
-    await ride.save();
 
     // Return a success response
     return NextResponse.json(
-      { message: "Ride requested successfully" },
+      false,
       { status: 200 }
     );
   } catch (error) {

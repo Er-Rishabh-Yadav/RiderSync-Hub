@@ -33,19 +33,15 @@ const rideSchema = new mongoose.Schema({
     default: false,
   },
   requestedUsers: [{
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    }
-  }
-  
-  ],
-  acceptedUser: 
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    }
-  ,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false,
+  }],
+  acceptedUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false,
+  },
   // You can add more fields relevant to a ride here
 });
 

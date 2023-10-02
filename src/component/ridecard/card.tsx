@@ -157,15 +157,25 @@ const RideCard: React.FC<RideCardProps> = ({
           <div className="max-w-md mx-auto">
             <div className="divide-y divide-gray-200">
               <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                <div className="w-full max-w-xs mx-auto ">
-                  <h2 className="text-2xl font-semibold mb-4">Requested Users</h2>
-                  <ul>
-                      {requestedUsers.map((username, index) => (
-                        <li key={index}>{username}</li>
-                      ))}
-                    </ul>
-                  <button onClick={() => setIsModalOpen(false)}>Close</button>
-                </div>
+              <div className="w-full max-w-xs mx-auto ">
+            <h2 className="text-2xl font-semibold mb-4">Requested Users</h2>
+            <ul className="space-y-2">
+              {requestedUsers.map((username, index) => (
+                <li key={index} className="flex items-center">
+                  <span className="flex-grow">{username}</span>
+                  <button
+                    className="bg-blue-500 text-white px-3 py-1 rounded-md mr-1"
+                    onClick={() => console.log(username)}
+                  >
+                    Accept
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => setIsModalOpen(false)} className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:ring-opacity-50 w-full">
+              Close
+            </button>
+          </div>
               </div>
             </div>
           </div>
