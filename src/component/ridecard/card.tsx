@@ -34,7 +34,12 @@ const RideCard: React.FC<RideCardProps> = ({
   const [requestedUsers, setRequestedUsers] = useState<Array<string>>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
-
+  const [ownername,setownername]=useState<string>("")
+ // want to call async function fetch user by id and set the ownername
+  useEffect(() => {
+    Modal.setAppElement(document.body);
+    fetchUsernameById(owner).then((username) => setownername(username));
+  }, []);
 const handleOpenChatModal = () => {
   setIsChatModalOpen(true);
 };
@@ -116,7 +121,7 @@ const handleCloseChatModal = () => {
     <div className="bg-white rounded-lg shadow-md p-4">
       <div>
         <h2 className="text-xl font-semibold">{rideName}</h2>
-        <p className="text-gray-500">Owner: {owner}</p>
+        <p className="text-gray-500">Owner: {ownername}</p>
         <p className="text-gray-500">Distance: {distance} KM</p>
         <p className="text-gray-500">Route: {route}</p>
       </div>
@@ -165,10 +170,10 @@ const handleCloseChatModal = () => {
         )}
          {isChatModalOpen && (
       <Modal isOpen={isChatModalOpen} onRequestClose={handleCloseChatModal}>
-       
+       {/* chat model commes here */}
       </Modal>
     )}
-         {/* Modal */}
+         {/* see request model */}
          <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}

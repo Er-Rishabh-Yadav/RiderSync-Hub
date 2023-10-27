@@ -175,7 +175,7 @@ function CommunityRides() {
 </div>
 
 
-
+{/* /create ride model */}
 
       <Modal
         isOpen={isModalOpen}
