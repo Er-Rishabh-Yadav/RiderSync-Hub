@@ -2,11 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import {Ride , User}  from '@/interface/interface'
 import axios from 'axios';
+import dynamic from 'next/dynamic';
+
 
 import Modal from 'react-modal';
-import mongoose from 'mongoose';
-import {Types} from 'mongoose'
-import { cp } from 'fs';
 interface RideCardProps {
   currentuser:string;
   rideId: string;
@@ -34,6 +33,15 @@ const RideCard: React.FC<RideCardProps> = ({
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [requestedUsers, setRequestedUsers] = useState<Array<string>>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+
+const handleOpenChatModal = () => {
+  setIsChatModalOpen(true);
+};
+
+const handleCloseChatModal = () => {
+  setIsChatModalOpen(false);
+};
   // const [currentowner, setcurrentowner] = useState<User | null>(null);
   const handleRequestRide = () => {
     // Implement your logic to send a ride request here.
@@ -151,10 +159,15 @@ const RideCard: React.FC<RideCardProps> = ({
           </button>
         )}
         {isBooked && (
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md ml-2">
+          <button className="bg-green-500 text-white px-4 py-2 rounded-md ml-2" onClick={handleOpenChatModal}>
             Chat
           </button>
         )}
+         {isChatModalOpen && (
+      <Modal isOpen={isChatModalOpen} onRequestClose={handleCloseChatModal}>
+       
+      </Modal>
+    )}
          {/* Modal */}
          <Modal
         isOpen={isModalOpen}
